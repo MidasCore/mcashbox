@@ -3,16 +3,16 @@ var {name} = require('../../package');
 var path = require('path');
 var fs = require('fs-extra');
 var homedir = require('homedir');
-const {execSync} = require('child_process')
+var downloader = require("../downloader");
 
 var supportedVersions = [
-  '0.4.24', '0.4.25', '0.5.4', '0.5.8', '0.5.9'
+  '0.4.25', '0.5.4',
 ]
 
 function getWrapper(options = {}) {
 
-  let compilerVersion = '0.5.4'
-  let solcDir = path.join(homedir(), '.tronbox', 'solc');
+  let compilerVersion = '0.5.4';
+  let solcDir = path.join(homedir(), '.mcashbox', 'solc');
 
   if (options.networks) {
     if (options.networks.useZeroFourCompiler) {
@@ -22,15 +22,12 @@ function getWrapper(options = {}) {
     }
 
     try {
-      let version = options.networks.compilers.solc.version
+      let version = options.networks.compilers.solc.version;
       if (supportedVersions.includes(version)) {
         compilerVersion = version
       } else {
-        console.error(`Error:
-TronBox supports only the following versions:
-${supportedVersions.join(', ')}
-`)
-        process.exit()
+        console.error(`Error: TronBox supports only the following versions: ${supportedVersions.join(', ')}`);
+        process.exit();
       }
     } catch (e) {
     }
@@ -39,10 +36,13 @@ ${supportedVersions.join(', ')}
   let soljsonPath = path.join(solcDir, `soljson_v${compilerVersion}.js`)
 
   if (!fs.existsSync(soljsonPath)) {
-    if (process.env.TRONBOX_NAME) {
-      name = process.env.TRONBOX_NAME
+    let downloaded = false;
+    downloader(compilerVersion).finally(() => {
+      downloaded = true;
+    });
+    while (!downloaded) {
+      require('deasync').sleep(100);
     }
-    execSync(`${name} --download-compiler ${compilerVersion}`).toString()
   }
   let soljson = eval('require')(soljsonPath)
   return wrapper(soljson)
