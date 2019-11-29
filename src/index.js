@@ -1,20 +1,14 @@
-require('source-map-support/register')
+require('source-map-support/register');
 
 var Config = require("./components/Config");
-var Command = require("./lib/command");
-var TaskError = require("./lib/errors/taskerror");
-var TruffleError = require("@truffle/error");
-var version = require("./lib/version");
-var OS = require("os");
-var downloader = require("./downloader");
+const Command = require("./lib/command");
+const TaskError = require("./lib/errors/taskerror");
+const TruffleError = require("@truffle/error");
+const version = require("./lib/version");
+const OS = require("os");
+const downloader = require("./downloader");
 
-var command = new Command(require("./lib/commands"));
-
-var options = {
-  logger: console
-};
-
-var commands = process.argv.slice(2)
+const commands = process.argv.slice(2);
 
 if (commands[0] === '--download-compiler' && commands[1]) {
 
@@ -22,9 +16,9 @@ if (commands[0] === '--download-compiler' && commands[1]) {
 
 } else {
 
-  var command = new Command(require("./lib/commands"));
+  const command = new Command(require("./lib/commands"));
 
-  var options = {
+  let options = {
     logger: console
   };
 
@@ -32,10 +26,10 @@ if (commands[0] === '--download-compiler' && commands[1]) {
     if (err) {
       if (err instanceof TaskError) {
         command.args
-          .usage("Tronbox v" + (version.bundle || version.core) + " - a development framework for tronweb"
+          .usage("Mcashbox v" + (version.bundle || version.core) +
             + OS.EOL + OS.EOL
-            + 'Usage: tronbox <command> [options]')
-          .epilog("See more at https://developers.tron.network/docs/tron-box-user-guide")
+            + 'Usage: mcashbox <command> [options]')
+          .epilog("See more at https://developer.mcash.network/docs/mcashbox")
           .showHelp();
       } else {
         if (err instanceof TruffleError) {

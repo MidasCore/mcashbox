@@ -8,9 +8,9 @@ function setDefaults(config) {
   return {
     ignore: config.ignore || [],
     commands: config.commands || {
-      "compile": "tronbox compile",
-      "migrate": "tronbox migrate",
-      "test": "tronbox test"
+      "compile": "mcashbox compile",
+      "migrate": "mcashbox migrate",
+      "test": "mcashbox test"
     },
     hooks: {
       "post-unpack": hooks["post-unpack"] || ""
@@ -30,4 +30,4 @@ function read(path) {
 module.exports = {
   read: read,
   setDefaults: setDefaults
-}
+};

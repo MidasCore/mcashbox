@@ -1,25 +1,24 @@
-var ReplManager = require("./repl");
-var Command = require("./command");
-var provision = require("../components/Provisioner");
-var contract = require("../components/Contract");
-var TronWrap = require("../components/TronWrap");
-var vm = require("vm");
-var expect = require("@truffle/expect");
-var _ = require("lodash");
-var TruffleError = require("@truffle/error");
-var fs = require("fs");
-var os = require("os");
-var path = require("path");
-var EventEmitter = require("events");
-var inherits = require("util").inherits;
-const logErrorAndExit = require('../components/TronWrap').logErrorAndExit
+const ReplManager = require("./repl");
+const Command = require("./command");
+const provision = require("../components/Provisioner");
+const contract = require("../components/Contract");
+const McashWrap = require("../components/McashWrap");
+const vm = require("vm");
+const expect = require("@truffle/expect");
+const _ = require("lodash");
+const TruffleError = require("@truffle/error");
+const fs = require("fs");
+const path = require("path");
+const EventEmitter = require("events");
+const inherits = require("util").inherits;
+const logErrorAndExit = require('../components/McashWrap').logErrorAndExit;
 
 inherits(Console, EventEmitter);
 
 function Console(tasks, options) {
   EventEmitter.call(this);
 
-  var self = this;
+  let self = this;
 
   expect.options(options, [
     "working_directory",
@@ -44,7 +43,7 @@ function Console(tasks, options) {
   }
 
   try {
-    this.tronWrap = TronWrap(options.networks[options.network], {
+    this.mcashWrap = McashWrap(options.networks[options.network], {
       verify: true,
       log: options.log
     })
@@ -52,19 +51,17 @@ function Console(tasks, options) {
     logErrorAndExit(console, err.message)
   }
 
-  // this.tronWrap.setHttpProvider(options.provider);
-
   // Bubble the ReplManager's exit event
   this.repl.on("exit", function() {
     self.emit("exit");
   });
-};
+}
 
 Console.prototype.start = function(callback) {
-  var self = this;
+  let self = this;
 
   if (!this.repl) {
-    this.repl = new Repl(this.options);
+    this.repl = new ReplManager(this.options);
   }
 
   // TODO: This should probalby be elsewhere.
@@ -79,9 +76,9 @@ Console.prototype.start = function(callback) {
     }
 
     self.repl.start({
-      prompt: "tronbox(" + self.options.network + ")> ",
+      prompt: "mcashbox(" + self.options.network + ")> ",
       context: {
-        tronWrap: self.tronWrap,
+        mcashWrap: self.mcashWrap,
       },
       interpreter: self.interpret.bind(self),
       done: callback
@@ -92,7 +89,7 @@ Console.prototype.start = function(callback) {
 };
 
 Console.prototype.provision = function(callback) {
-  var self = this;
+  let self = this;
 
   fs.readdir(this.options.contracts_build_directory, function(err, files) {
     if (err) {
@@ -102,7 +99,7 @@ Console.prototype.provision = function(callback) {
       // doesn't exist" 99.9% of the time.
     }
 
-    var promises = [];
+    let promises = [];
     files = files || [];
 
     files.forEach(function(file) {
@@ -121,8 +118,8 @@ Console.prototype.provision = function(callback) {
     });
 
     Promise.all(promises).then(function(json_blobs) {
-      var abstractions = json_blobs.map(function(json) {
-        var abstraction = contract(json);
+      let abstractions = json_blobs.map(function (json) {
+        let abstraction = contract(json);
         provision(abstraction, self.options);
         return abstraction;
       });
@@ -135,21 +132,21 @@ Console.prototype.provision = function(callback) {
 };
 
 Console.prototype.resetContractsInConsoleContext = function(abstractions) {
-  var self = this;
+  let self = this;
 
-  abstractions = abstractions || []
+  abstractions = abstractions || [];
 
-  var contextVars = {};
+  let contextVars = {};
 
   abstractions.forEach(function(abstraction) {
     contextVars[abstraction.contract_name] = abstraction;
   });
 
   self.repl.setContextVars(contextVars);
-}
+};
 
 Console.prototype.interpret = function(cmd, context, filename, callback) {
-  var self = this;
+  let self = this;
 
   if (this.command.getCommand(cmd.trim(), this.options.noAliases) != null) {
     return self.command.run(cmd.trim(), this.options, function(err) {
@@ -173,7 +170,7 @@ Console.prototype.interpret = function(cmd, context, filename, callback) {
     });
   }
 
-  var result;
+  let result;
   try {
     result = vm.runInContext(cmd, context, {
       displayErrors: false
@@ -184,6 +181,6 @@ Console.prototype.interpret = function(cmd, context, filename, callback) {
 
   // Resolve all promises. This will leave non-promises alone.
   Promise.resolve(result).then(function(res) { callback(null, res) }).catch(callback);
-}
+};
 
 module.exports = Console;

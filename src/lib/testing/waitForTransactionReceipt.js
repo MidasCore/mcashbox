@@ -1,9 +1,9 @@
 // thanks Xavier Leprêtre
 // https://gist.github.com/xavierlepretre/88682e871f4ad07be4534ae560692ee6
 
-var waitForTransactionReceipt = (tronWeb) => (txHash = false, interval = 500) => {
+var waitForTransactionReceipt = (mcashweb) => (txHash = false, interval = 500) => {
   const transactionReceiptAsync = (resolve, reject) => {
-    tronWeb.trx.getTransactionInfo(txHash, (error, receipt) => {
+    mcashweb.mcash.getTransactionInfo(txHash, (error, receipt) => {
       if (error) {
         reject(error);
       } else if (!receipt || JSON.stringify(receipt) === '{}') {
@@ -24,6 +24,6 @@ var waitForTransactionReceipt = (tronWeb) => (txHash = false, interval = 500) =>
   } else {
     throw new Error("Invalid Type: " + txHash);
   }
-}
+};
 
-module.exports = waitForTransactionReceipt
+module.exports = waitForTransactionReceipt;

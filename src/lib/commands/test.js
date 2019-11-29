@@ -12,8 +12,8 @@ var command = {
     var fs = require("fs");
     var copy = require("../copy");
     var Environment = require("../environment");
-    var TronWrap = require('../../components/TronWrap')
-    const logErrorAndExit = require('../../components/TronWrap').logErrorAndExit
+    var McashWrap = require('../../components/McashWrap');
+    const logErrorAndExit = require('../../components/McashWrap').logErrorAndExit;
 
     var config = Config.detect(options);
 
@@ -26,23 +26,23 @@ var command = {
     }
 
     if (!config.network) {
-      console.error("\nERROR: Neither development nor test network has been set in tronbox.js\n")
+      console.error("\nERROR: Neither development nor test network has been set in config.js\n")
       return
     }
 
     try {
-      TronWrap(config.networks[config.network], {
+      McashWrap(config.networks[config.network], {
         verify: true,
         log: options.log
       })
     } catch(err) {
-      logErrorAndExit(console, err.message)
+      logErrorAndExit(console, err.message);
     }
-    process.env.CURRENT = 'test'
+    process.env.CURRENT = 'test';
 
-    var ipcDisconnect;
+    let ipcDisconnect;
 
-    var files = [];
+    let files = [];
 
     if (options.file) {
       files = [options.file];
@@ -51,12 +51,12 @@ var command = {
     }
 
     function getFiles(callback) {
-      if (files.length != 0) {
+      if (files.length !== 0) {
         return callback(null, files);
       }
 
       dir.files(config.test_directory, callback);
-    };
+    }
 
     getFiles(function(err, files) {
       if (err) return done(err);
@@ -69,7 +69,7 @@ var command = {
         if (err) return done(err);
 
         function cleanup() {
-          var args = arguments;
+          let args = arguments;
           // Ensure directory cleanup.
           temp.cleanup(function(err) {
             // Ignore cleanup errors.
@@ -78,7 +78,7 @@ var command = {
               ipcDisconnect();
             }
           });
-        };
+        }
 
         function run() {
           // Set a new artifactor; don't rely on the one created by Environments.
@@ -89,17 +89,17 @@ var command = {
             test_files: files,
             contracts_build_directory: temporaryDirectory
           }), cleanup);
-        };
+        }
 
-        var environmentCallback = function(err) {
+        const environmentCallback = function (err) {
           if (err) return done(err);
           // Copy all the built files over to a temporary directory, because we
           // don't want to save any tests artifacts. Only do this if the build directory
           // exists.
-          fs.stat(config.contracts_build_directory, function(err, stat) {
+          fs.stat(config.contracts_build_directory, function (err, stat) {
             if (err) return run();
 
-            copy(config.contracts_build_directory, temporaryDirectory, function(err) {
+            copy(config.contracts_build_directory, temporaryDirectory, function (err) {
               if (err) return done(err);
 
               config.logger.log("Using network '" + config.network + "'." + OS.EOL);
@@ -107,13 +107,13 @@ var command = {
               run();
             });
           });
-        }
+        };
 
         if (config.networks[config.network]) {
           Environment.detect(config, environmentCallback);
         } else {
 
-          throw new Error('No development/test environment set in tronbox.js')
+          throw new Error('No development/test environment set in config.js')
 
           // var ipcOptions = {
           //   network: "test"
@@ -135,6 +135,6 @@ var command = {
       });
     });
   }
-}
+};
 
 module.exports = command;

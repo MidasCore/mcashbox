@@ -7,36 +7,36 @@ var async = require("async");
 // var Web3 = require("web3-mock");
 var expect = require("@truffle/expect");
 var Deployer = require("../Deployer");
-var chalk = require("chalk")
+var chalk = require("chalk");
 
-var TronWrap = require('../TronWrap');
-const logErrorAndExit = require('../TronWrap').logErrorAndExit
-var tronWrap;
+var McashWrap = require('../McashWrap');
+const logErrorAndExit = require('../McashWrap').logErrorAndExit;
+var mcashWrap;
 
 function Migration(file) {
   this.file = path.resolve(file);
   this.number = parseInt(path.basename(file));
-};
+}
 
 function sleep(millis) {
   return new Promise(resolve => setTimeout(resolve, millis));
 }
 
 Migration.prototype.run = function (options, callback) {
-  var self = this;
-  var logger = options.logger;
+  let self = this;
+  let logger = options.logger;
 
   logger.log("Running migration: " + path.relative(options.migrations_directory, this.file));
 
-  var resolver = new ResolverIntercept(options.resolver);
+  let resolver = new ResolverIntercept(options.resolver);
 
-  tronWrap = TronWrap(options)
+  mcashWrap = McashWrap(options);
   // Initial context.
-  var context = {
-    tronWrap: tronWrap
+  let context = {
+    mcashWrap: mcashWrap
   };
 
-  var deployer = new Deployer({
+  let deployer = new Deployer({
     logger: {
       log: function (msg) {
         logger.log("  " + msg);
@@ -48,21 +48,21 @@ Migration.prototype.run = function (options, callback) {
     basePath: path.dirname(this.file)
   });
 
-  var finish = function (err) {
+  let finish = function (err) {
     if (err) return callback(err);
     deployer.start().then(async function () {
       if (options.save === false) return;
 
-      var Migrations = resolver.require("./Migrations.sol");
+      let Migrations = resolver.require("./Migrations.sol");
 
       if (Migrations && Migrations.isDeployed()) {
         logger.log("Saving successful migration to network...");
 
-        let result
-        await Migrations.deployed()
-        result = Migrations.call('setCompleted', [self.number])
+        let result;
+        await Migrations.deployed();
+        result = Migrations.call('setCompleted', [self.number]);
 
-        return Promise.resolve(result)
+        return Promise.resolve(result);
 
         // return Migrations.deployed().then(function (migrations) {
         //   return Migrations.call('setCompleted', [self.number]);
@@ -84,16 +84,16 @@ Migration.prototype.run = function (options, callback) {
     context: context,
     resolver: resolver,
     args: [deployer],
-  })
+  });
 
-    if (!fn || !fn.length || fn.length === 0) {
-      return callback(new Error("Migration " + self.file + " invalid or does not take any parameters"));
-    }
-    fn(deployer, options.network, options.networks[options.network].from);
-    finish();
+  if (!fn || !fn.length || fn.length === 0) {
+    return callback(new Error("Migration " + self.file + " invalid or does not take any parameters"));
+  }
+  fn(deployer, options.network, options.networks[options.network].from);
+  finish();
 };
 
-var Migrate = {
+const Migrate = {
   Migration: Migration,
 
   assemble: function (options, callback) {
@@ -217,7 +217,7 @@ var Migrate = {
       send: function (payload) {
         var result = provider.send(payload);
 
-        if (payload.method == "eth_sendTransaction") {
+        if (payload.method === "eth_sendTransaction") {
           printTransaction(result.result);
         }
 
@@ -227,7 +227,7 @@ var Migrate = {
         provider.sendAsync(payload, function (err, result) {
           if (err) return callback(err);
 
-          if (payload.method == "eth_sendTransaction") {
+          if (payload.method === "eth_sendTransaction") {
             printTransaction(result.result);
           }
 
@@ -253,10 +253,10 @@ var Migrate = {
   lastCompletedMigration: function (options, callback) {
     var Migrations;
 
-    // if called from console, tronWrap is null here
+    // if called from console, mcashWrap is null here
     // but the singleton has been initiated so:
-    if (!tronWrap) {
-      tronWrap = TronWrap();
+    if (!mcashWrap) {
+      mcashWrap = McashWrap();
     }
 
     Migrations = options.resolver.require("Migrations");
@@ -268,13 +268,13 @@ var Migrate = {
     Migrations.deployed().then(function (migrations) {
       // Two possible Migrations.sol's (lintable/unlintable)
 
-      return (tronWrap.filterMatchFunction('last_completed_migration', migrations.abi))
+      return (mcashWrap.filterMatchFunction('last_completed_migration', migrations.abi))
         ? migrations.call('last_completed_migration')
         : migrations.call('lastCompletedMigration');
 
     }).then(function (completed_migration) {
       var value = typeof completed_migration == 'object' ? completed_migration : '0';
-      callback(null, tronWrap._toNumber(value));
+      callback(null, mcashWrap._toNumber(value));
     }).catch(() => {
       // first migration:
       callback(null, 0)
@@ -284,7 +284,7 @@ var Migrate = {
   needsMigrating: function (options, callback) {
     var self = this;
 
-    if (options.reset == true) {
+    if (options.reset === true) {
       return callback(null, true);
     }
 

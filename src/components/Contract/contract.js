@@ -1,17 +1,17 @@
 var ethJSABI = require("ethjs-abi");
-var TronWrap = require('../TronWrap');
-var {constants} = require('../TronWrap');
-var BigNumber = require("bignumber.js")
-var StatusError = require("./statuserror.js")
+var McashWrap = require('../McashWrap');
+var {constants} = require('../McashWrap');
+var BigNumber = require("bignumber.js");
+var StatusError = require("./statuserror.js");
 
-var contract = (function (module) {
+(function (module) {
 
   // Planned for future features, logging, etc.
   function Provider(provider) {
     this.provider = provider;
   }
 
-  let tronWrap;
+  let mcashWrap;
 
   Provider.prototype.send = function () {
     return this.provider.send.apply(this.provider, arguments);
@@ -257,7 +257,7 @@ var contract = (function (module) {
         var library_address = links[library_name];
         var regex = new RegExp("__" + library_name + "_+", "g");
         bytecode = bytecode.replace(regex, library_address.replace("0x", "").replace("41", ""));
-        // var address = TronWrap.address2HexString(library_address);
+        // var address = McashWrap.address2HexString(library_address);
         // bytecode = bytecode.replace(eval('/'+library_address+"/ig"),address.replace("41", ""));
       });
 
@@ -275,20 +275,20 @@ var contract = (function (module) {
       this.contract = contract;
       this.address = contract.address;
     }
-  };
+  }
 
   function toCamelCase(str) {
-    return str.replace(/_([a-z])/g, g => g[1].toUpperCase())
+    return str.replace(/_([a-z])/g, g => g[1].toUpperCase());
   }
 
   function filterEnergyParameter(args) {
-    let deployParameters = Object.keys(constants.deployParameters)
-    let lastArg = args[args.length - 1]
-    if (typeof lastArg !== 'object' || Array.isArray(lastArg)) return [args, {}]
-    args.pop()
-    let res = {}
+    let deployParameters = Object.keys(constants.deployParameters);
+    let lastArg = args[args.length - 1];
+    if (typeof lastArg !== 'object' || Array.isArray(lastArg)) return [args, {}];
+    args.pop();
+    let res = {};
     for (let property in lastArg) {
-      let camelCased = toCamelCase(property)
+      let camelCased = toCamelCase(property);
       if (!!~deployParameters.indexOf(camelCased)) {
         res[camelCased] = lastArg[property]
       }
@@ -298,9 +298,9 @@ var contract = (function (module) {
 
   Contract._static_methods = {
 
-    initTronWeb: function (options) {
-      if (!tronWrap) {
-        tronWrap = TronWrap(options);
+    initMcashWeb: function (options = {}) {
+      if (!mcashWrap) {
+        mcashWrap = McashWrap(options);
       }
     },
 
@@ -310,9 +310,8 @@ var contract = (function (module) {
       }
 
       var wrapped = new Provider(provider);
-      //zzsun-rm-web3
       // this.web3.setProvider(wrapped);
-      // tronWrap.setHttpProvider(provider.host);
+      // mcashWrap.setHttpProvider(provider.host);
       this.currentProvider = provider;
     },
 
@@ -343,7 +342,7 @@ var contract = (function (module) {
             return true;
           }
 
-          return name != arr[index + 1];
+          return name !== arr[index + 1];
         }).join(", ");
 
         throw new Error(self.contractName + " contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of " + self._json.contractName + ": " + unlinked_libraries);
@@ -383,7 +382,7 @@ var contract = (function (module) {
 
         tx_params.abi = self.abi;
 
-        tronWrap._deployContract(tx_params, _callback);
+        mcashWrap._deployContract(tx_params, _callback);
 
         function _callback(err, res) {
           if (err) {
@@ -398,9 +397,9 @@ var contract = (function (module) {
     at: function (address) {
       var self = this;
 
-      throw new Error('The construct contractArtifacts.at(address) is not currently supported by TronBox. It will be in the future. Stay in touch.')
+      throw new Error('The construct contractArtifacts.at(address) is not currently supported by McashBox. It will be in the future. Stay in touch.');
 
-      if (address == null || typeof address != "string" || address.length != 42) {
+      if (address == null || typeof address != "string" || address.length !== 42) {
         throw new Error("Invalid address passed to " + this._json.contractName + ".at(): " + address);
       }
 
@@ -412,7 +411,7 @@ var contract = (function (module) {
           var instance = new self(address);
 
           return new Promise(function (accept, reject) {
-            tronWrap._getContract(address, function (err, contractAddress) {
+            mcashWrap._getContract(address, function (err, contractAddress) {
               if (err) return reject(err);
               if (!contractAddress || contractAddress.replace(/^0x/, "").replace(/0/g, "") === '') {
                 return reject(new Error("Cannot create instance of " + self.contractName + "; no code at address " + address));
@@ -477,9 +476,10 @@ var contract = (function (module) {
           methodArgs
         }, self.defaults());
 
-        tronWrap.triggerContract(option, _callback);
+        mcashWrap.triggerContract(option, _callback);
       })
     },
+
     deployed: function () {
       var self = this;
       return new Promise(function (accept, reject) {
@@ -487,18 +487,18 @@ var contract = (function (module) {
         if (!self.isDeployed()) {
           throw new Error(self.contractName + " has not been deployed to detected network");
         }
-        TronWrap().trx.getContract(self.address)
+        McashWrap().mcash.getContract(self.address)
           .then(res => {
-            const abi = res.abi && res.abi.entrys ? res.abi.entrys : []
+            const abi = res.abi && res.abi.entrys ? res.abi.entrys : [];
             for (var i = 0; i < abi.length; i++) {
               let item = abi[i];
               if (self.hasOwnProperty(item.name)) continue;
               if (/(function|event)/i.test(item.type) && item.name) {
                 let f = (...args) => {
                   return self.call.apply(null, [item.name].concat(args))
-                }
-                self[item.name] = f
-                self[item.name].call = f
+                };
+                self[item.name] = f;
+                self[item.name].call = f;
               }
             }
             accept(self);
@@ -559,7 +559,7 @@ var contract = (function (module) {
       if (typeof name == "function") {
         var contract = name;
 
-        if (contract.isDeployed() == false) {
+        if (contract.isDeployed() === false) {
           throw new Error("Cannot link contract without an address.");
         }
 
@@ -649,7 +649,7 @@ var contract = (function (module) {
         }
 
         return self._property_values[key] || fn.call(self);
-      }
+      };
       var setter = function (val) {
         if (fn.set != null) {
           fn.set.call(self, val);
@@ -817,7 +817,7 @@ var contract = (function (module) {
 
         signature += ")";
 
-        var topic = TronWrap().sha3(signature);
+        var topic = McashWrap().sha3(signature);
 
         events[topic] = item;
       });
@@ -852,7 +852,7 @@ var contract = (function (module) {
       get: function () {
         var code = this._json.deployedBytecode;
 
-        if (code.indexOf("0x") != 0) {
+        if (code.indexOf("0x") !== 0) {
           code = "0x" + code;
         }
 
@@ -861,7 +861,7 @@ var contract = (function (module) {
       set: function (val) {
         var code = val;
 
-        if (val.indexOf("0x") != 0) {
+        if (val.indexOf("0x") !== 0) {
           code = "0x" + code;
         }
 

@@ -1,6 +1,6 @@
 var command = {
   command: 'exec',
-  description: 'Execute a JS module within this tronBox environment',
+  description: 'Execute a JS module within this McashBox environment',
   builder: {
     file: {
       type: "string"
@@ -15,7 +15,7 @@ var command = {
     }
   },
   run: function (options, done) {
-    process.env.CURRENT = 'exec'
+    process.env.CURRENT = 'exec';
     var Config = require("../../components/Config");
     var Contracts = require("../../components/WorkflowCompile");
     var ConfigurationError = require("../errors/configurationerror");
@@ -37,7 +37,7 @@ var command = {
       return;
     }
 
-    if (path.isAbsolute(file) == false) {
+    if (path.isAbsolute(file) === false) {
       file = path.join(process.cwd(), file);
     }
 
@@ -65,6 +65,6 @@ var command = {
       }), done);
     });
   }
-}
+};
 
 module.exports = command;

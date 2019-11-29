@@ -15,7 +15,7 @@ var Migrate = require("../components/Migrate");
 var Profiler = require("../components/Compile/profiler");
 var async = require("async");
 var originalrequire = require("original-require");
-var TronWrap = require('../components/TronWrap');
+var McashWrap = require('../components/McashWrap');
 
 chai.use(require("./assertions"));
 
@@ -74,9 +74,9 @@ var Test = {
     var runner;
     var test_resolver;
 
-    var tronWrap = TronWrap()
+    var wrap = McashWrap();
 
-    tronWrap._getAccounts().then(accs => {
+    wrap._getAccounts().then(accs => {
       accounts = accs;
 
       if (!config.from) {

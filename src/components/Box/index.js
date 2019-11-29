@@ -7,7 +7,7 @@ var Config = require("../Config");
 var Box = {
   unbox: function(url, destination, options) {
     options = options || {};
-    options.logger = options.logger || {log: function() {}}
+    options.logger = options.logger || {log: function() {}};
 
     return Promise.resolve()
       .then(function() {
@@ -39,9 +39,9 @@ var Box = {
         return callback(err);
       }
 
-      self.unbox("https://github.com/trufflesuite/truffle-init-" + name, dir)
+      self.unbox("https://github.com/nghiand/mcashbox-init-" + name, dir)
         .then(function() {
-          var config = Config.load(path.join(dir, "tronbox.js"), {});
+          var config = Config.load(path.join(dir, "config.js"), {});
           callback(null, config);
         })
         .catch(callback);

@@ -35,8 +35,7 @@ var command = {
       path.join(config.working_directory, "app/**/*"),
       path.join(config.contracts_build_directory, "/**/*"),
       path.join(config.contracts_directory, "/**/*"),
-      path.join(config.working_directory, "tronbox-config.js"),
-      path.join(config.working_directory, "tronbox.js")
+      path.join(config.working_directory, "config.js"),
     ];
 
     chokidar.watch(watchPaths, {

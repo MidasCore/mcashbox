@@ -8,8 +8,8 @@ var path = require("path");
 var _ = require("lodash");
 var async = require("async");
 var fs = require("fs");
-var TronWrap = require('../../components/TronWrap');
-var TronWeb = require("tronweb");
+var McashWrap = require('../../components/McashWrap');
+var McashWeb = require("mcashweb");
 var waitForTransactionReceipt = require('./waitForTransactionReceipt');
 
 function TestRunner(options) {
@@ -31,52 +31,52 @@ function TestRunner(options) {
   this.first_snapshot = false;
   this.initial_snapshot = null;
   this.known_events = {};
-  this.tronwrap = TronWrap();
+  this.mcashwrap = McashWrap();
 
-  global.tronWeb = new TronWeb(
-    this.tronwrap.fullNode,
-    this.tronwrap.solidityNode,
-    this.tronwrap.eventServer,
-    this.tronwrap.defaultPrivateKey
-  )
+  global.mcashWeb = new McashWeb(
+    this.mcashwrap.fullNode,
+    this.mcashwrap.solidityNode,
+    this.mcashwrap.eventServer,
+    this.mcashwrap.defaultPrivateKey
+  );
 
-  global.waitForTransactionReceipt = waitForTransactionReceipt(tronWeb)
+  global.waitForTransactionReceipt = waitForTransactionReceipt(mcashWeb);
 
   // For each test
   this.currentTestStartBlock = null;
 
   this.BEFORE_TIMEOUT = 120000;
   this.TEST_TIMEOUT = 300000;
-};
+}
 
 TestRunner.prototype.initialize = function(callback) {
-  var self = this;
+  let self = this;
 
-  var test_source = new TestSource(self.config);
+  let test_source = new TestSource(self.config);
   this.config.resolver = new TestResolver(self.initial_resolver, test_source, self.config.contracts_build_directory);
 
-  var afterStateReset = function(err) {
+  let afterStateReset = function (err) {
     if (err) return callback(err);
 
-    fs.readdir(self.config.contracts_build_directory, function(err, files) {
+    fs.readdir(self.config.contracts_build_directory, function (err, files) {
       if (err) return callback(err);
 
-      files = _.filter(files, function(file) {
+      files = _.filter(files, function (file) {
         return path.extname(file) === ".json"
       });
 
-      async.map(files, function(file, finished) {
+      async.map(files, function (file, finished) {
         fs.readFile(path.join(self.config.contracts_build_directory, file), "utf8", finished);
-      }, function(err, data) {
+      }, function (err, data) {
         if (err) return callback(err);
 
         var contracts = data.map(JSON.parse).map(contract);
         var abis = _.flatMap(contracts, "abi");
 
-        abis.map(function(abi) {
+        abis.map(function (abi) {
           if (/event/i.test(abi.type)) {
             var signature = abi.name + "(" + _.map(abi.inputs, "type").join(",") + ")";
-            self.known_events[self.tronwrap.sha3(signature)] = {
+            self.known_events[self.mcashwrap.sha3(signature)] = {
               signature: signature,
               abi_entry: abi
             };
@@ -107,9 +107,7 @@ TestRunner.prototype.startTest = function(mocha, callback) {
 };
 
 TestRunner.prototype.endTest = function(mocha, callback) {
-  var self = this;
-
-  if (mocha.currentTest.state != "failed") {
+  if (mocha.currentTest.state !== "failed") {
     return callback();
   }
   callback();
@@ -120,11 +118,11 @@ TestRunner.prototype.snapshot = function(callback) {
     if (err) return callback(err);
     callback(null, result.result);
   });
-},
+};
 
 TestRunner.prototype.revert = function(snapshot_id, callback) {
   this.rpc("evm_revert", [snapshot_id], callback);
-}
+};
 
 TestRunner.prototype.rpc = function(method, arg, cb) {
   var req = {
@@ -132,7 +130,7 @@ TestRunner.prototype.rpc = function(method, arg, cb) {
     method: method,
     id: new Date().getTime()
   };
-  if (arguments.length == 3) {
+  if (arguments.length === 3) {
     req.params = arg;
   } else {
     cb = arg;

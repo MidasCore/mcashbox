@@ -1,15 +1,14 @@
 var fs = require("fs");
 var _ = require("lodash");
 var path = require("path");
-var { constants } = require('./TronWrap');
+var { constants } = require('./McashWrap');
 var Provider = require("./Provider");
 var TruffleError = require("@truffle/error");
 var Module = require('module');
 var findUp = require("find-up");
 var originalrequire = require("original-require");
 
-var DEFAULT_CONFIG_FILENAME = "tronbox.js";
-var BACKUP_CONFIG_FILENAME = "tronbox-config.js"; // For Windows + Command Prompt
+var DEFAULT_CONFIG_FILENAME = "config.js";
 
 function Config(truffle_directory, working_directory, network) {
   var self = this;
@@ -273,7 +272,7 @@ function Config(truffle_directory, working_directory, network) {
           return null;
         }
 
-        var options = self.network_config;
+        let options = self.network_config;
         options.verboseRpc = self.verboseRpc;
         return Provider.create(options);
       },
@@ -299,7 +298,7 @@ function Config(truffle_directory, working_directory, network) {
     self.addProp(prop, props[prop]);
   });
 
-};
+}
 
 Config.prototype.addProp = function (key, obj) {
   Object.defineProperty(this, key, {
@@ -315,7 +314,7 @@ Config.prototype.addProp = function (key, obj) {
 };
 
 Config.prototype.normalize = function (obj) {
-  var clone = {};
+  let clone = {};
   Object.keys(obj).forEach(function (key) {
     try {
       clone[key] = obj[key];
@@ -324,18 +323,18 @@ Config.prototype.normalize = function (obj) {
     }
   });
   return clone;
-}
+};
 
 Config.prototype.with = function (obj) {
-  var normalized = this.normalize(obj);
-  var current = this.normalize(this);
+  let normalized = this.normalize(obj);
+  let current = this.normalize(this);
 
   return _.extend({}, current, normalized);
 };
 
 Config.prototype.merge = function (obj) {
-  var self = this;
-  var clone = this.normalize(obj);
+  let self = this;
+  let clone = this.normalize(obj);
 
   // Only set keys for values that don't throw.
   Object.keys(obj).forEach(function (key) {
@@ -354,13 +353,13 @@ Config.default = function () {
 };
 
 Config.detect = function (options, filename) {
-  var search;
+  let search;
 
   (!filename)
-    ? search = [DEFAULT_CONFIG_FILENAME, BACKUP_CONFIG_FILENAME]
+    ? search = [DEFAULT_CONFIG_FILENAME]
     : search = filename;
 
-  var file = findUp.sync(search, {cwd: options.working_directory || options.workingDirectory});
+  let file = findUp.sync(search, {cwd: options.working_directory || options.workingDirectory});
 
   if (file == null) {
     throw new TruffleError("Could not find suitable configuration file.");
@@ -370,14 +369,14 @@ Config.detect = function (options, filename) {
 };
 
 Config.load = function (file, options) {
-  var config = new Config();
+  let config = new Config();
 
   config.working_directory = path.dirname(path.resolve(file));
 
   // The require-nocache module used to do this for us, but
   // it doesn't bundle very well. So we've pulled it out ourselves.
   delete require.cache[Module._resolveFilename(file, module)];
-  var static_config = originalrequire(file);
+  let static_config = originalrequire(file);
 
   config.merge(static_config);
   config.merge(options);

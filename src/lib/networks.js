@@ -113,7 +113,7 @@ var Networks = {
           config.logger.log("    " + network_name);
         });
 
-        config.logger.log(OS.EOL + "Closely inspect the deployed networks below, and use `tronbox networks --clean` to remove any networks that don't match your configuration. You should not use the wildcard configuration ('*') for staging and production networks for which you intend to deploy your application.")
+        config.logger.log(OS.EOL + "Closely inspect the deployed networks below, and use `mcashbox networks --clean` to remove any networks that don't match your configuration. You should not use the wildcard configuration ('*') for staging and production networks for which you intend to deploy your application.")
       }
 
       network_names.forEach(function(network_name) {

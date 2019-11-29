@@ -1,8 +1,8 @@
 {
-  "name": "tronbox",
-  "namespace": "tronprotocol",
-  "version": "2.7.2",
-  "description": "TronBox - Simple development framework for tronweb",
+  "name": "mcashbox",
+  "namespace": "mcashchain",
+  "version": "2.7.5-beta1",
+  "description": "McashBox - Development framework for mcashchain",
   "dependencies": {
     "@truffle/contract-sources": "^0.1.6",
     "@truffle/error": "0.0.7",
@@ -29,6 +29,7 @@
     "graphlib": "^2.1.7",
     "homedir": "^0.6.0",
     "lodash": "^4.17.11",
+    "mcashweb": "^2.7.5",
     "mkdirp": "^0.5.1",
     "mocha": "5.2.0",
     "node-dir": "0.1.17",
@@ -43,7 +44,6 @@
     "spawn-args": "^0.1.0",
     "superagent": "^5.1.0",
     "temp": "^0.8.3",
-    "tronweb": "^2.7.2",
     "truffle-init": "^1.0.7",
     "web3-mock": "1.0.1",
     "yargs": "^8.0.2"
@@ -65,7 +65,7 @@
     "truffle-blockchain-utils": "^0.0.5"
   },
   "bin": {
-    "tronbox": "build/tronbox.js"
+    "mcashbox": "build/mcashbox.js"
   },
   "scripts": {
     "test": "echo \"Error: tests will be fixed soon in a new release\" && exit 1",
@@ -74,29 +74,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tron-us/tronbox.git"
+    "url": ""
   },
-  "homepage": "https://github.com/tron-us/tronbox/",
+  "homepage": "",
   "bugs": {
-    "url": "https://github.com/tron-us/tronbox/issues"
+    "url": ""
   },
-  "originalAuthor": "consensys.net",
-  "author": "tron.network",
-  "authors": [
-    {
-      "name": "Tim Coulter",
-      "email": "tim@timothyjcoulter.com",
-      "url": "https://github.com/tcoulter"
-    },
-    {
-      "name": "alinger",
-      "email": "alinger@forke.cn"
-    },
-    {
-      "name": "Francesco Sullo",
-      "email": "francesco@sullo.co",
-      "url": "https://github.com/sullof"
-    }
+  "originalAuthors": [
+    "consensys.net",
+    "tron.network"
   ],
   "publishConfig": {
     "access": "public"

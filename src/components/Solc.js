@@ -1,5 +1,4 @@
 var wrapper = require('solc/wrapper');
-var {name} = require('../../package');
 var path = require('path');
 var fs = require('fs-extra');
 var homedir = require('homedir');
@@ -7,7 +6,7 @@ var downloader = require("../downloader");
 
 var supportedVersions = [
   '0.4.25', '0.5.4',
-]
+];
 
 function getWrapper(options = {}) {
 
@@ -26,14 +25,14 @@ function getWrapper(options = {}) {
       if (supportedVersions.includes(version)) {
         compilerVersion = version
       } else {
-        console.error(`Error: TronBox supports only the following versions: ${supportedVersions.join(', ')}`);
+        console.error(`Error: McashBox supports only the following versions: ${supportedVersions.join(', ')}`);
         process.exit();
       }
     } catch (e) {
     }
   }
 
-  let soljsonPath = path.join(solcDir, `soljson_v${compilerVersion}.js`)
+  let soljsonPath = path.join(solcDir, `soljson_v${compilerVersion}.js`);
 
   if (!fs.existsSync(soljsonPath)) {
     let downloaded = false;
@@ -41,10 +40,10 @@ function getWrapper(options = {}) {
       downloaded = true;
     });
     while (!downloaded) {
-      require('deasync').sleep(100);
+      require('deasync').sleep(1000);
     }
   }
-  let soljson = eval('require')(soljsonPath)
+  let soljson = eval('require')(soljsonPath);
   return wrapper(soljson)
 }
 

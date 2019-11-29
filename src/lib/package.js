@@ -190,7 +190,7 @@ var Package = {
       if(!files.length){
         var msg = "Could not locate any publishable artifacts in " +
                   options.contracts_build_directory + ". " +
-                  "Run `tronbox compile` before publishing.";
+                  "Run `mcashbox compile` before publishing.";
 
         return callback(new Error(msg));
       }

@@ -1,23 +1,23 @@
-var TaskError = require("./errors/taskerror");
-var yargs = require("yargs/yargs");
-var _ = require("lodash");
+const TaskError = require("./errors/taskerror");
+const yargs = require("yargs/yargs");
+const _ = require("lodash");
 
 function Command(commands) {
   this.commands = commands;
 
-  var args = yargs();
+  let args = yargs();
 
   Object.keys(this.commands).forEach(function(command) {
     args = args.command(commands[command]);
   });
 
   this.args = args;
-};
+}
 
 Command.prototype.getCommand = function(str, noAliases) {
   var argv = this.args.parse(str);
 
-  if (argv._.length == 0) {
+  if (argv._.length === 0) {
     return null;
   }
 
@@ -37,11 +37,11 @@ Command.prototype.getCommand = function(str, noAliases) {
     while (currentLength <= input.length) {
       // Gather all possible commands that match with the current length
       var possibleCommands = availableCommandNames.filter(function(possibleCommand) {
-        return possibleCommand.substring(0, currentLength) == input.substring(0, currentLength);
+        return possibleCommand.substring(0, currentLength) === input.substring(0, currentLength);
       });
 
       // Did we find only one command that matches? If so, use that one.
-      if (possibleCommands.length == 1) {
+      if (possibleCommands.length === 1) {
         chosenCommand = possibleCommands[0];
         break;
       }

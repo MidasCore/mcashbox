@@ -4,7 +4,7 @@ var deploy = require("./src/actions/deploy");
 var deployMany = require("./src/actions/deploymany");
 var link = require("./src/actions/link");
 var create = require("./src/actions/new");
-var {dlog} = require('../TronWrap')
+var {dlog} = require('../McashWrap')
 
 function Deployer(options) {
   var self = this;
@@ -60,7 +60,7 @@ Deployer.prototype.new = function() {
 };
 
 Deployer.prototype.exec = function(file) {
-  throw new Error("deployer.exec() has been deprecated; please seen the tronbox-require package for integration.")
+  throw new Error("deployer.exec() has been deprecated; please seen the mcashbox-require package for integration.")
 };
 
 Deployer.prototype.then = function(fn) {
@@ -75,7 +75,7 @@ Deployer.prototype.then = function(fn) {
 Deployer.prototype.queueOrExec = function(fn) {
   var self = this;
 
-  if (this.chain.started == true) {
+  if (this.chain.started === true) {
     return new Promise(function(accept, reject) {
       accept();
     }).then(fn);

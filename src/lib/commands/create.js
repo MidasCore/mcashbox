@@ -32,11 +32,11 @@ var command = {
     }
 
     if (type == null) {
-      return done(new ConfigurationError("Please specify the type of item to create. Example: tronbox create contract MyContract"));
+      return done(new ConfigurationError("Please specify the type of item to create."));
     }
 
     if (name == null) {
-      return done(new ConfigurationError("Please specify the name of item to create. Example: tronbox create contract MyContract"));
+      return done(new ConfigurationError("Please specify the name of item to create."));
     }
 
     if (!/^[a-zA-Z_$][a-zA-Z_$0-9]*$/.test(name)) {

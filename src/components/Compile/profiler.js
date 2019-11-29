@@ -14,8 +14,6 @@ var debug = require("debug")("compile:profiler");
 
 module.exports = {
   updated: function(options, callback) {
-    var self = this;
-
     expect.options(options, [
       "resolver"
     ]);
@@ -64,7 +62,7 @@ module.exports = {
           }
 
           build_files = build_files.filter(function(build_file) {
-            return path.extname(build_file) == ".json";
+            return path.extname(build_file) === ".json";
           });
 
           async.map(build_files, function(buildFile, finished) {
@@ -76,8 +74,8 @@ module.exports = {
             if (err) return c(err);
 
             try {
-              for (var i = 0; i < jsonData.length; i++) {
-                var data = JSON.parse(jsonData[i]);
+              for (let i = 0; i < jsonData.length; i++) {
+                let data = JSON.parse(jsonData[i]);
 
                 // In case there are artifacts from other source locations.
                 if (sourceFilesArtifacts[data.sourcePath] == null) {
@@ -98,10 +96,10 @@ module.exports = {
         // Get the minimum updated time for all of a source file's artifacts
         // (note: one source file might have multiple artifacts).
         Object.keys(sourceFilesArtifacts).forEach(function(sourceFile) {
-          var artifacts = sourceFilesArtifacts[sourceFile];
+          let artifacts = sourceFilesArtifacts[sourceFile];
 
           sourceFilesArtifactsUpdatedTimes[sourceFile] = artifacts.reduce(function(minimum, current) {
-            var updatedAt = new Date(current.updatedAt).getTime();
+            let updatedAt = new Date(current.updatedAt).getTime();
 
             if (updatedAt < minimum) {
               return updatedAt;
@@ -110,7 +108,7 @@ module.exports = {
           }, Number.MAX_SAFE_INTEGER);
 
           // Empty array?
-          if (sourceFilesArtifactsUpdatedTimes[sourceFile] == Number.MAX_SAFE_INTEGER) {
+          if (sourceFilesArtifactsUpdatedTimes[sourceFile] === Number.MAX_SAFE_INTEGER) {
             sourceFilesArtifactsUpdatedTimes[sourceFile] = 0;
           }
         });
@@ -120,7 +118,7 @@ module.exports = {
       // Stat all the source files, getting there updated times, and comparing them to
       // the artifact updated times.
       function(c) {
-        var sourceFiles = Object.keys(sourceFilesArtifacts);
+        let sourceFiles = Object.keys(sourceFilesArtifacts);
 
         async.map(sourceFiles, function(sourceFile, finished) {
           fs.stat(sourceFile, function(err, stat) {
@@ -136,15 +134,15 @@ module.exports = {
           if (err) return callback(err);
 
           sourceFiles.forEach(function(sourceFile, index) {
-            var sourceFileStat = sourceFileStats[index];
+            let sourceFileStat = sourceFileStats[index];
 
             // Ignore updating artifacts if source file has been removed.
             if (sourceFileStat == null) {
               return;
             }
 
-            var artifactsUpdatedTime = sourceFilesArtifactsUpdatedTimes[sourceFile] || 0;
-            var sourceFileUpdatedTime = (sourceFileStat.mtime || sourceFileStat.ctime).getTime();
+            let artifactsUpdatedTime = sourceFilesArtifactsUpdatedTimes[sourceFile] || 0;
+            let sourceFileUpdatedTime = (sourceFileStat.mtime || sourceFileStat.ctime).getTime();
 
             if (sourceFileUpdatedTime > artifactsUpdatedTime) {
               updatedFiles.push(sourceFile);

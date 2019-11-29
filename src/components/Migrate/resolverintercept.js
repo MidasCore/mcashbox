@@ -3,7 +3,7 @@ const path = require("path");
 function ResolverIntercept(resolver) {
   this.resolver = resolver;
   this.cache = {};
-};
+}
 
 ResolverIntercept.prototype.require = function(import_path) {
   // Modify import_path so the cache key is consistently the same irrespective

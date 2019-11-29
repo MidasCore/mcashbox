@@ -17,6 +17,6 @@ function CompileError(message) {
 
   CompileError.super_.call(this, normal_message);
   this.message = fancy_message;
-};
+}
 
 module.exports = CompileError;

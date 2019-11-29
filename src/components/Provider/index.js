@@ -1,4 +1,4 @@
-var {TronWeb} = require("../TronWrap");
+var {McashWeb} = require("../McashWrap");
 var wrapper = require('./wrapper');
 
 module.exports = {
@@ -15,7 +15,7 @@ module.exports = {
       provider = options.provider;
     } else {
 
-      const HttpProvider = TronWeb.providers.HttpProvider
+      const HttpProvider = McashWeb.providers.HttpProvider;
 
       HttpProvider.prototype.send = function (payload) {
         var request = this.prepareRequest(false);
