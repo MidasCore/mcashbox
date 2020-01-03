@@ -4,7 +4,6 @@ var path = require("path");
 var ResolverIntercept = require("./resolverintercept");
 var Require = require("@truffle/require");
 var async = require("async");
-// var Web3 = require("web3-mock");
 var expect = require("@truffle/expect");
 var Deployer = require("../Deployer");
 var chalk = require("chalk");

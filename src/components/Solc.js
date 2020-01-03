@@ -5,19 +5,19 @@ var homedir = require('homedir');
 var downloader = require("../downloader");
 
 var supportedVersions = [
-  '0.4.25', '0.5.4',
+  '0.4.25', '0.4.26', '0.5.4', '0.5.8'
 ];
 
 function getWrapper(options = {}) {
 
-  let compilerVersion = '0.5.4';
+  let compilerVersion = '0.5.8';
   let solcDir = path.join(homedir(), '.mcashbox', 'solc');
 
   if (options.networks) {
     if (options.networks.useZeroFourCompiler) {
-      compilerVersion = '0.4.25'
+      compilerVersion = '0.4.26'
     } else if (options.networks.useZeroFiveCompiler) {
-      compilerVersion = '0.5.4'
+      compilerVersion = '0.5.8'
     }
 
     try {

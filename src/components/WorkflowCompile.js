@@ -28,7 +28,7 @@ async function getCompilerVersion(options) {
     const networkInfo = await mcashWrap._getNetworkInfo();
     return networkInfo.compilerVersion;
   } catch(err) {
-    return "0.4.25";
+    return "0.4.26";
   }
 }
 

@@ -84,5 +84,7 @@ The console supports the `mcashbox` command. For example, you can invoke `migrat
 McashBox supports all the Solidity versions.
 ```
 0.4.25
+0.4.26
 0.5.4
+0.5.8
 ```
