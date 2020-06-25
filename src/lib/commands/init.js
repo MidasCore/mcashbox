@@ -25,7 +25,7 @@ var command = {
     }
 
     // defer to `truffle unbox` command with "bare" box as arg
-    var url = "https://github.com/nghiand/mcashbox-init-bare.git";
+    var url = "https://github.com/MidasCore/mcashbox-init-bare.git";
     options._ = [url];
 
     UnboxCommand.run(options, done);

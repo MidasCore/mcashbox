@@ -39,7 +39,7 @@ var Box = {
         return callback(err);
       }
 
-      self.unbox("https://github.com/nghiand/mcashbox-init-" + name, dir)
+      self.unbox("https://github.com/MidasCore/mcashbox-init-" + name, dir)
         .then(function() {
           var config = Config.load(path.join(dir, "config.js"), {});
           callback(null, config);

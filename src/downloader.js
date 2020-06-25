@@ -4,7 +4,7 @@ const homedir = require('homedir');
 const semver = require("semver");
 const request = require("request-promise");
 
-const URL = 'https://raw.githubusercontent.com/nghiand/mcash-solc-bin/master';
+const URL = 'https://raw.githubusercontent.com/MidasCore/mcash-solc-bin/master';
 
 async function getSolcVersions() {
     return request(URL + "/list.json")

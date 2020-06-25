@@ -5,7 +5,7 @@
  * - a string containing a repo under the `truffle-box` org
  */
 function normalizeURL(url) {
-  url = url || "https://github.com/nghiand/mcashbox-init-bare";
+  url = url || "https://github.com/MidasCore/mcashbox-init-bare";
 
   // full URL already
   if (url.indexOf("://") !== -1 || url.indexOf("git@") !== -1) {
