@@ -1,7 +1,7 @@
 {
   "name": "mcashbox",
   "namespace": "mcashchain",
-  "version": "2.7.5-beta3",
+  "version": "2.7.5",
   "description": "McashBox - Development framework for mcashchain",
   "dependencies": {
     "@truffle/contract-sources": "^0.1.6",
